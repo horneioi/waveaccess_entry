@@ -1,0 +1,6 @@
+- hosts: drupal_servers
+  become: true
+  roles:
+    - role: docker_install
+      vars:
+        state: absent

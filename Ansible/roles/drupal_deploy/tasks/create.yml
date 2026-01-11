@@ -1,0 +1,34 @@
+- name: Ensure project directory exists
+  ansible.builtin.file:
+    path: "{{ compose_project_path }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Render docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ compose_project_path }}/docker-compose.yml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+
+- name: Set up hosts file
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ item.ip }} {{ item.domain }}"
+    state: "present"
+  loop:
+    - { ip: "127.0.0.1", domain: "web.devops" }
+    - { ip: "127.0.0.1", domain: "api.devops" }
+    - { ip: "127.0.0.1", domain: "database.devops" }
+    - { ip: "127.0.0.1", domain: "nginx.devops" }
+    - { ip: "127.0.0.1", domain: "devops.local" }
+    - { ip: "127.0.0.1", domain: "registry.gitlab.local" }
+    - { ip: "127.0.0.1", domain: "registry.devops" }
+    - { ip: "127.0.0.1", domain: "jenkins.devops" }
+
+- name: Bring up all containers
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: "{{ compose_project_path }}"

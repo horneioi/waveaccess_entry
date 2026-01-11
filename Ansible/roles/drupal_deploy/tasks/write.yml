@@ -1,0 +1,17 @@
+- name: Write access for drupal settings.php
+  ansible.builtin.shell: >
+    docker compose exec -T drupal sh -c
+    "chown www-data:www-data /var/www/html/sites/default/settings.php &&
+     chmod 664 /var/www/html/sites/default/settings.php"
+  args:
+    chdir: "{{ compose_project_path }}"
+  when: drupal_compose_state == "write"
+
+- name: Revert access for drupal settings.php
+  ansible.builtin.shell: >
+    docker compose exec -T drupal sh -c
+    "chown root:root /var/www/html/sites/default/settings.php &&
+     chmod 644 /var/www/html/sites/default/settings.php"
+  args:
+    chdir: "{{ compose_project_path }}"
+  when: drupal_compose_state == "unwrite"

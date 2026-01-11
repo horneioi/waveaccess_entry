@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  drupal:
+    build: "{{ compose_project_path }}/drupal"
+    container_name: drupal
+    volumes:
+      - drupal-data:/opt/drupal/web
+    depends_on:
+      - database
+    networks:
+      - devops
+
+  database:
+    image: mariadb:{{ mariadb_version }}
+    container_name: database
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=drupal
+      - MYSQL_USER=drupal
+      - MYSQL_PASSWORD=drupal
+    networks:
+      - devops
+
+  nginx:
+    build: "{{ compose_project_path }}/nginx"
+    container_name: nginx
+    environment:
+      - NGINX_USER={{ nginx_user }}
+      - NGINX_PASSWORD={{ nginx_password }}
+    ports:
+      - "443:443"
+    volumes:
+      - drupal-data:/opt/drupal/web
+    depends_on:
+      - drupal
+    networks:
+      - devops
+
+networks:
+  devops:
+    driver: bridge
+
+volumes:
+  drupal-data:

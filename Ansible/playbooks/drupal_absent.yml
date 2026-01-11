@@ -1,0 +1,6 @@
+- hosts: drupal_servers
+  become: yes
+  vars:
+    drupal_compose_state: absent
+  roles:
+    - drupal_deploy

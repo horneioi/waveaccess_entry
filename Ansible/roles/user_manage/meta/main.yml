@@ -1,0 +1,10 @@
+galaxy_info:
+  author: horneioi
+  description: Install or remove Docker and Docker Compose
+  min_ansible_version: 2.12
+  platforms: 
+    - name: Ubuntu
+      versions:
+        - "20.04"
+        - "22.04"
+        - "24.04"

@@ -1,0 +1,8 @@
+- hosts: drupal_servers
+  become: true
+  roles:
+    - role: docker_install
+      vars:
+        docker_version: "5:29.1.4-1~ubuntu.24.04~noble"
+        docker_compose_version: "2.33.1"
+        state: present

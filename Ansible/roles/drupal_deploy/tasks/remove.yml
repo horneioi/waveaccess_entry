@@ -1,0 +1,19 @@
+- name: Remove all containers
+  ansible.builtin.command:
+    cmd: docker compose down -v
+    chdir: "{{ compose_project_path }}"
+
+- name: Remove domains from hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ item.ip }} {{ item.domain }}"
+    state: "absent"
+  loop:
+    - { ip: "127.0.0.1", domain: "web.devops" }
+    - { ip: "127.0.0.1", domain: "api.devops" }
+    - { ip: "127.0.0.1", domain: "database.devops" }
+    - { ip: "127.0.0.1", domain: "nginx.devops" }
+    - { ip: "127.0.0.1", domain: "devops.local" }
+    - { ip: "127.0.0.1", domain: "registry.gitlab.local" }
+    - { ip: "127.0.0.1", domain: "registry.devops" }
+    - { ip: "127.0.0.1", domain: "jenkins.devops" }

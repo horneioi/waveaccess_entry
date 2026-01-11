@@ -1,0 +1,4 @@
+username: devops
+user_groups: []
+user_ssh_key: ""
+user_state: present   # present | absent

@@ -1,0 +1,11 @@
+- hosts: drupal_servers
+  become: true
+  roles:
+    - role: user_manage
+      vars:
+        user_name: devops
+        user_groups:
+          - docker
+          - sudo
+        user_state: absent
+        user_ssh_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}" 

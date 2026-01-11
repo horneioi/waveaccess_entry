@@ -1,0 +1,11 @@
+- name: Include create tasks
+  include_tasks: create.yml
+  when: drupal_compose_state == "present"
+
+- name: Include remove tasks
+  include_tasks: remove.yml
+  when: drupal_compose_state == "absent"
+
+- name: Write Access rights.
+  include_tasks: write.yml
+  when: drupal_compose_state in ["write", "unwrite"]

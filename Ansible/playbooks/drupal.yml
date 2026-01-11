@@ -1,0 +1,10 @@
+- hosts: drupal_servers
+  become: yes
+  vars:
+    drupal_compose_state: present
+    mariadb_version: "11.1"
+    nginx_user: "admin"
+    nginx_password: "admin"
+    compose_project_path: "/home/{{ ansible_user }}/projects/project/containers"
+  roles:
+    - drupal_deploy

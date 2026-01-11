@@ -1,0 +1,9 @@
+galaxy_info:
+  author: horneioi
+  description: Manage users with groups and SSH keys
+  platforms:
+    - name: Ubuntu
+      versions:
+        - "20.04"
+        - "22.04"
+        - "24.04"

@@ -1,0 +1,4 @@
+docker_version: "24.0.5"
+docker_compose_version: "2.33.1"
+ubuntu_release: "jammy" 
+state: present                   # present | absent

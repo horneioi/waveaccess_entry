@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  ansible:
+    build: ./Ansible
+    container_name: ansible
+    volumes:
+      - ./Ansible:/ansible/ansible
+      - ./project:/ansible/project
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /ansible/ansible
+    environment:
+      - ANSIBLE_CONFIG=/ansible/ansible/ansible.cfg
+    command: sleep infinity

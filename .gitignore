@@ -1,0 +1,30 @@
+# ENV
+.env
+*.env
+!.env.example
+
+
+# Secrets / Auth
+*.htpasswd
+*.httpasswd
+
+# TLS
+*.pem
+*.key
+*.crt
+
+# Jenkins
+/project/Jenkins/jenkins_home/
+
+# Docker Registry
+/project/Docker-Registry/data/
+
+# Obsidian
+/project/docs/.obsidian/
+
+# Scripts
+/project/scripts/*
+!/project/scripts/
+!/project/scripts/parse_text.sh
+
+/.vscode/

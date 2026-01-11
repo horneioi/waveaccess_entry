@@ -1,0 +1,7 @@
+- hosts: drupal_servers
+  become: yes
+  vars:
+    drupal_compose_state: unwrite
+    compose_project_path: "/home/{{ ansible_user }}/projects/project/containers"
+  roles:
+    - drupal_deploy

@@ -1,0 +1,8 @@
+drupal_version: "10-fpm"
+mariadb_version: "latest"
+nginx_user: "admin"
+nginx_password: "admin"
+drupal_write_path: 
+
+compose_project_path: "/home/{{ ansible_user }}/projects/project/containers"
+drupal_compose_state: "present"  # present | absent
