@@ -209,6 +209,7 @@ IaC‑инструмент. Реализована библиотека из pla
 4. docker-compose up -d
 5. open https://nginx.devops
 ```
+Для запуска Pipeline необходимо запустить Docker-Registry из ./projects/Docker-Registry, а также указать credentials в самом Jenkins + Добавить credentials для доступа Jenkins к репозиторию.
 
 ## Observability
 * На данный момент не предоставлены визуальные метрики.
