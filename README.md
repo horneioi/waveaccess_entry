@@ -1,7 +1,7 @@
 # Drupal за NGINX reverse‑proxy + Jenkins, Docker Registry и Ansible
 Проект представляет собой учебную/демо‑инфраструктуру для Drupal, работающего за NGINX reverse‑proxy, с CI/CD на Jenkins, хранением образов в Docker Registry и управлением сервером через Ansible.
 ​
-
+![Architecture Diagram](src/network-schemapng.png)
 ## Описание и цели
 * Поднять Drupal за NGINX reverse‑proxy с терминацией HTTPS.
 
@@ -11,7 +11,7 @@
 
 * Продемонстрировать базовые сценарии CI/CD, тесты Drupal API и интеграцию с NGINX.
 ​
-## Tech Stack
+## Tech Stack.
 ### Задача реализована с помощью:
 
 * Drupal — CMS система.
@@ -182,14 +182,40 @@ IaC‑инструмент. Реализована библиотека из pla
 * в Jenkinsfile предусмотрен контроль версий. При сборке - используется commit hash, добавляемый в тэг собранного образа.
 для отката - изменить тэг образа в разделе Сборки на конкретный, желаемый для отката.
 
+## Healthchecks
+* Представлен healthcheck для nginx: curl https://nginx.devops/healthcheck -> 200 OK - с nginx всё в порядке.
+
+## Частые ошибки
+1. при запуске в первый раз, с клиента может быть недоступен https://nginx.devops/dp/
+    * nginx будет проксировать с ошибкой 404.
+    Решение:
+        1й вариант: с хост-машины перейти на домен drupal https://web.devops, завершить установку, после чего корент drupal /dp/ будет доступен через Nginx.
+        2й вариант: вручную предоставить свободный внешний порт для подключения через него и настройку с клиента.
+2. при установке drupal, installer.php может запретить установку по причине settings.php is not writable.
+    Решение: запустить Ansible playbook, предоставляющий права на запись. (drupal_write.yml)
+3. при попытке перехода на https://nginx.devops не резолвится dns-name
+   Решение: добавить в hosts файле записи 
+    127.0.0.1 nginx.devops
+    127.0.0.1 web.devops
+    127.0.0.1 database.devops ( пока не используется )
+    127.0.0.1 jenkins.devops
+
+## Quick-start (local)
+```
+0. add domain-names into hosts file on your system.
+1. git clone
+2. cd ./project/containers
+3. cp .env.example .env
+4. docker-compose up -d
+5. open https://nginx.devops
+```
+
+## Observability
+* На данный момент не предоставлены визуальные метрики.
+* Логи доступны с помощью docker compose logs из корневой директории запущенного docker-compose.yml
+
 ## ToDo / дальнейшее развитие
 * containers/drupal: добавить /config папку для лучшей читаемости.
-
-* Docker-Registry/test-image: удалить тестовую папку.
-
-* docs/.obsidian: добавить в .gitignore.
-
-* Упростить структуру scripts/bash_task и при возможности удалить слой bash_task.
 
 * Расширить документацию по:
     - конкретным docker-compose файлам;
@@ -198,4 +224,4 @@ IaC‑инструмент. Реализована библиотека из pla
 
     - примерам API‑тестов Drupal и healthcheck’ов NGINX.
 ​
-
+    - Prometheus | Graphana для визуальных метрик производительности
