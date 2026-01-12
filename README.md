@@ -1,7 +1,6 @@
 # Drupal за NGINX reverse‑proxy + Jenkins, Docker Registry и Ansible
 Проект представляет собой учебную/демо‑инфраструктуру для Drupal, работающего за NGINX reverse‑proxy, с CI/CD на Jenkins, хранением образов в Docker Registry и управлением сервером через Ansible.
 ​
-![Architecture Diagram](src/network-schemapng.png)
 ## Описание и цели
 * Поднять Drupal за NGINX reverse‑proxy с терминацией HTTPS.
 
@@ -129,7 +128,6 @@ IaC‑инструмент. Реализована библиотека из pla
     │   └── auth                -> конфигурация для BasicAuth
     ├── containers              -> директория сборки проекта
     │   ├── drupal              -> конфигурация drupal
-    │   │   └── files           -> ToDo: стереть
     │   │   └── settings.php    -> ToDo: перенести в папку /config; конфигурация drupal
     │   └── nginx               -> конфигурация Nginx 
     │       ├── certs           -> ToDo: убрать из репозитория для безопасности; хранилище сертификатов 
@@ -140,6 +138,32 @@ IaC‑инструмент. Реализована библиотека из pla
     └── scripts                 -> bash скрипты.
         └── download            -> ToDo: удалить, не часть проекта, побочный продукт скрипта. директория bash скрипта
 ```
+
+## Архитектура:
+### Containers:
+
+В реализации используются nginx, MariaDB и drupal:10-FPM образы.
+
+Nginx имеет два сервера: один для reverse-proxy к drupal и обработки собственных подпапок (далее - nginx.devops ), другой как хост под drupal ( далее - web.devops ), куда будет перенаправляется трафик из первичного nginx сервера в цепочке.
+
+* nginx.devops использует порт :443 для обработки внешних подключений по HTTPS, и имеет 3 локации.
+    * /dp/, -> Защищён BasicAuth 
+    * /index.html, /static.html  -> генерируются динамически при запуске через Jenkins
+    * /uploads - подпапка для хранения общедоступных файлов.
+
+* web.devops тоже использует порт :443, и не проброшен сам по себе в сеть, доступ к нему идёт только через nginx.devops proxy_redirect
+    * drupal не поддерживает смену корневой директории, из-за чего применяем sub_filter для всех запросов из nginx.devops/dp/ -> drupal для корректное переадрессации и отображения стилей. P.S base_url - deprecated в drupal settings.php
+    * также из-за использования образа drupal:10-fpm, из сервере web.devops - мы перенаправляем трафик на обработку в php-fpm на порту :9000 (drupal:9000) самого drupal для обработки .php файлов.
+
+### CI/CD
+Для pipelines используется Jenkinsfile, выполняющий первичный скрипт + build + deploy + пробный curl для проверки работоспособности.
+
+
+### Поток данных:
+Client -> htts://Nginx.devops -> Basic-Auth -> /dp/ <-> php-fpm <-> drupal <-> MariaDB.
+
+![Architecture Diagram](src/network-schemapng.png)
+
 ## Запуск и использование (high‑level)
 ​
 ### Подготовить окружение:
