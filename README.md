@@ -2,6 +2,7 @@
 Проект представляет собой учебную/демо‑инфраструктуру для Drupal, работающего за NGINX reverse‑proxy, с CI/CD на Jenkins, хранением образов в Docker Registry и управлением сервером через Ansible.
 ​
 ## Описание и цели
+
 * Поднять Drupal за NGINX reverse‑proxy с терминацией HTTPS.
 
 * Обеспечить сборку и версионирование Docker‑образов через Jenkins и Docker Registry.
@@ -52,8 +53,8 @@
 ### Jenkins
 CI‑инструмент. Реализован Jenkinsfile, проверен на установленной версии в WSL.
 ​
-
 Стадии Pipeline:
+
 * Запуск bash‑скрипта, необходимого для дальнейшей работы проекта nginx+drupal.
 
 * Авторизация в Docker‑Registry.
@@ -67,6 +68,7 @@ CI‑инструмент. Реализован Jenkinsfile, проверен н
 * Пример работы Ansible‑скриптов, запущенных на удалённой машине.
 
 ### Ansible
+
 IaC‑инструмент. Реализована библиотека из playbooks:
 
 * P.S Добавление удалённого сервера для обработки Ansible выполняется с помощью папки inventories/.
@@ -158,7 +160,6 @@ Nginx имеет два сервера: один для reverse-proxy к drupal 
 ### CI/CD
 Для pipelines используется Jenkinsfile, выполняющий первичный скрипт + build + deploy + пробный curl для проверки работоспособности.
 
-
 ### Поток данных:
 Client -> htts://Nginx.devops -> Basic-Auth -> /dp/ <-> php-fpm <-> drupal <-> MariaDB.
 
@@ -249,3 +250,7 @@ Client -> htts://Nginx.devops -> Basic-Auth -> /dp/ <-> php-fpm <-> drupal <-> M
     - примерам API‑тестов Drupal и healthcheck’ов NGINX.
 ​
     - Prometheus | Graphana для визуальных метрик производительности
+
+* единый .env.example для всего проекта.
+* документация для каждой зоны отдельно.
+* инструкции по запуску ansible, Jenkins, Docker-Registry.
