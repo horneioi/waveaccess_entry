@@ -7,13 +7,11 @@ IFS=$'\n\t'
 # <!-- TODO create logs.txt if not provided -->
 LOG_FILE="logs.txt" 
 
+
 # Функция для логирования простых сообщений с одним timestamp
 log() {
     local msg="$1"
-    {
-        echo "$(date +'%Y-%m-%d %H:%M:%S') $msg"
-        echo
-    } >> "$LOG_FILE"
+        echo "$(date +'%Y-%m-%d %H:%M:%S') $msg" | tee -a "$LOG_FILE"
 }
 
 # Функция для логирования блоков с многострочным выводом
@@ -25,7 +23,7 @@ log_block() {
         "$@"
         echo "}"
         echo
-    } >> "$LOG_FILE"
+    } | tee -a "$LOG_FILE"
 }
 
 if [[ $# -lt 2 ]]; then
