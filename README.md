@@ -134,8 +134,13 @@ IaC‑инструмент. Реализована библиотека из pla
 ```
 
 ## Архитектура:
-### Containers:
 
+### Архитектурные решения
+- Drupal развёрнут в subpath (/dp/), для сохранения единого entrypoint
+- CI/CD тестировался на локально установленном Jenkins
+- Docker Registry используется в Docker-контейнере из папки /project/Docker-Registry
+
+### Containers:
 В реализации используются nginx, MariaDB и drupal:10-FPM образы.
 
 Nginx имеет два сервера: один для reverse-proxy к drupal и обработки собственных подпапок (далее - nginx.devops ), другой как хост под drupal ( далее - web.devops ), куда будет перенаправляется трафик из первичного nginx сервера в цепочке.
@@ -153,7 +158,7 @@ Nginx имеет два сервера: один для reverse-proxy к drupal 
 Для pipelines используется Jenkinsfile, выполняющий первичный скрипт + build + deploy + пробный curl для проверки работоспособности.
 
 ### Поток данных:
-Client -> htts://Nginx.devops -> Basic-Auth -> /dp/ <-> php-fpm <-> drupal <-> MariaDB.
+Client -> https://nginx.devops -> Basic-Auth -> /dp/ <-> php-fpm <-> drupal <-> MariaDB.
 
 ![Architecture Diagram](src/network-schemapng.png)
 
@@ -213,7 +218,6 @@ Client -> htts://Nginx.devops -> Basic-Auth -> /dp/ <-> php-fpm <-> drupal <-> M
    * Решение: добавить в hosts файле записи 
       - 127.0.0.1 nginx.devops
       - 127.0.0.1 web.devops
-      - 127.0.0.1 database.devops ( пока не используется )
       - 127.0.0.1 jenkins.devops
 
 ## Quick-start (local)
@@ -231,6 +235,46 @@ Client -> htts://Nginx.devops -> Basic-Auth -> /dp/ <-> php-fpm <-> drupal <-> M
 * На данный момент не предоставлены визуальные метрики.
 * Логи доступны с помощью docker compose logs из корневой директории запущенного docker-compose.yml
 
+## Configuration & Parameters
+
+### Ansible
+Все роли параметризуемы и используют defaults с возможностью переопределения через:
+- playbook vars
+- inventory
+- CI/CD (`--extra-vars`)
+
+Пример:
+ansible-playbook playbooks/docker.yml -e state=absent
+
+### Параметры для playbooks:
+#### docker_install
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| state | present | present / absent |
+| docker_version | 24.0.5 | Docker version |
+| docker_compose_version | 2.33.1 | Docker compose version |
+
+#### drupal_deploy
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| drupal_version | 10-fpm | drupal version |
+| mariadb_version | latest | MariaDB version |
+| nginx_user | admin | Nginx Basic Auth default credentials |
+| nginx_password | admin | Nginx Basic Auth default credentials |
+| compose_project_path | /home/{{ ansible_user }}/projects/project/containers | project directory for deployment |
+| drupal_compose_state | present | present/absent  |
+
+#### user_manage
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| username | devops | username |
+| user_groups | [] | groups to apply the new user |
+| user_ssh_key | "" | User SSH key |
+| user_state | present | present / absent |
+
 ## ToDo / дальнейшее развитие
 * containers/drupal: добавить /config папку для лучшей читаемости.
 
@@ -241,7 +285,7 @@ Client -> htts://Nginx.devops -> Basic-Auth -> /dp/ <-> php-fpm <-> drupal <-> M
 
     - примерам API‑тестов Drupal и healthcheck’ов NGINX.
 ​
-    - Prometheus | Graphana для визуальных метрик производительности
+    - Prometheus | Grafana для визуальных метрик производительности
 
 * единый .env.example для всего проекта.
 * документация для каждой зоны отдельно.

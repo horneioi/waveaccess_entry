@@ -1,4 +1,3 @@
-username: devops
-user_groups: []
-user_ssh_key: ""
-user_state: present   # present | absent
+docker_version: "24.0.5"
+docker_compose_version: "2.33.1"
+state: present                   # present | absent
