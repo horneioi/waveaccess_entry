@@ -99,7 +99,15 @@ pipeline {
                 cd ./Ansible
                 ls -la ./playbooks
                 
-                ansible-playbook -i inventories/server/hosts playbooks/drupal.yml --become
+                ansible-playbook \
+                -i inventories/server/hosts \
+                playbooks/drupal.yml \
+                --become \
+                --extra-vars "
+                    drupal_compose_state=absent
+                    nginx_user: "yes_admin"
+                    nginx_password: "yes_admin"
+                " 
                     
                 sudo docker --version
                 '''
