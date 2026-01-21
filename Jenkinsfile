@@ -104,7 +104,7 @@ pipeline {
                 playbooks/drupal.yml \
                 --become \
                 --extra-vars "
-                    drupal_compose_state=absent
+                    drupal_compose_state=present
                     nginx_user: "yes_admin"
                     nginx_password: "yes_admin"
                 " 
