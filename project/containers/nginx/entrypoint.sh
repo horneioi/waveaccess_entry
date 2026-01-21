@@ -7,7 +7,7 @@ PASS="${NGINX_PASSWORD:-changeme}"
 
 # Генерируем .htpasswd
 mkdir -p /etc/nginx
-echo "$USER:$(openssl passwd -apr1 "$PASS")" > /etc/nginx/auth/.htpasswd
+echo "$USER:$(openssl passwd -apr1 "$PASS")" > /etc/nginx/auth/.httpasswd
 
 # Запуск nginx в форграунд режиме
 nginx -g "daemon off;"
