@@ -105,8 +105,8 @@ pipeline {
                 --become \
                 --extra-vars "
                     drupal_compose_state=present
-                    nginx_user:admin
-                    nginx_password:admin
+                    nginx_user=admin
+                    nginx_password=admin
                 " 
                     
                 sudo docker --version
